@@ -1,0 +1,1 @@
+<li><a href="{{ $d->url() }}" target="_blank" rel="noopener"><span class="ty">{{ $d->file_type ?: 'file' }}</span>{{ $d->title }}@if ($d->last_updated_on_site)<span class="when">Updated {{ $d->last_updated_on_site->format('j M Y') }}</span>@endif</a></li>
