@@ -33,3 +33,5 @@ Thumbs.db
 /public/img
 /database/*.sqlite
 /storage/app/private
+.vercel
+.env*

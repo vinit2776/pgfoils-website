@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Behind Vercel / a load balancer: believe X-Forwarded-Proto so asset and redirect URLs stay https.
+        $middleware->trustProxies(at: '*');
         $middleware->web(append: [
             \App\Http\Middleware\StagingGate::class,
             \App\Http\Middleware\SecurityHeaders::class,

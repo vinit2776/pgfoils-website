@@ -1,0 +1,52 @@
+name: Deploy
+
+# Runs after CI passes on main. Pull requests get a preview URL; main goes to production.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Forked pull requests cannot read secrets, so they skip the deploy.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: gd, intl, mbstring, pdo_sqlite, sqlite3, zip, bcmath, exif, fileinfo
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          npm ci
+
+      - name: Prepare app (images, assets, read-only content database)
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          ./scripts/vercel-prepare.sh
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then FLAGS="--prod"; else FLAGS=""; fi
+          npx --yes vercel@54 deploy $FLAGS --yes --token "$VERCEL_TOKEN"
