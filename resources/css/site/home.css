@@ -1,0 +1,29 @@
+/* Home page extras. Tokens from tokens.css; no new colours. */
+.hero .makes { margin: 40px 0 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .875rem; color: var(--on-dark-2); }
+.hero .makes b { color: #fff; font-weight: 700; letter-spacing: .02em; }
+.certband { background: var(--surface); border-bottom: 1px solid var(--line); padding-block: 22px; }
+.certband .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; }
+.certband .lbl { margin: 0; font-weight: 700; font-size: .875rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.cert-row { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; flex: 1; }
+.cert-row li { width: 64px; }
+.cert-row img { width: 100%; height: 48px; object-fit: contain; }
+.sub { color: var(--ink-2); max-width: 62ch; margin: 12px 0 0; }
+.row-links { margin: 32px 0 0; display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; }
+.tiles.t3 { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 800px) { .tiles.t3 { grid-template-columns: repeat(3, 1fr); } }
+.countries { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.countries li { border: 1px solid var(--steel-2); padding: 8px 14px; color: #fff; font-weight: 600; font-size: .9375rem; }
+.map img { width: 100%; height: auto; background: #fff; }
+.cta-band { background: var(--cyan-ink); color: #fff; padding-block: clamp(48px, 8vw, 88px); }
+.cta-band h2 { color: #fff; font-size: clamp(1.75rem, 4vw, 2.75rem); margin: 0 0 12px; }
+.cta-band p { margin: 0 0 28px; max-width: 52ch; }
+/* quote form */
+.form { display: grid; gap: 18px; max-width: 720px; }
+.form .row { display: grid; gap: 18px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .form .row { grid-template-columns: 1fr 1fr; } }
+.form label { display: grid; gap: 6px; font-weight: 600; font-size: .9375rem; }
+.form input, .form select, .form textarea { font: 400 1rem var(--f-body); padding: 12px 14px; border: 1px solid var(--ink-2); background: var(--surface); color: var(--ink); width: 100%; min-height: 44px; border-radius: 0; }
+.form input:focus-visible, .form select:focus-visible, .form textarea:focus-visible { outline: 3px solid var(--cyan); outline-offset: 1px; }
+.form .err { color: var(--err); font-weight: 600; font-size: .875rem; }
+.form .hp { position: absolute; left: -9999px; }
+.flash { background: var(--ok-tint); color: var(--ink); border-left: 4px solid var(--ok); padding: 16px 20px; max-width: 720px; margin-bottom: 24px; }

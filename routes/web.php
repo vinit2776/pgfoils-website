@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\InvestorsController;
 use App\Http\Controllers\LegacyRedirectController;
+use App\Http\Controllers\QuoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.home')->name('home');
@@ -22,12 +23,8 @@ Route::get('/reports/{id}/{rest?}', [LegacyRedirectController::class, 'report'])
 Route::get('/storage/{path}', [LegacyRedirectController::class, 'file'])->where('path', '.+');
 Route::get('/{page}.html', [LegacyRedirectController::class, 'page'])->where('page', '[A-Za-z0-9_-]+');
 
-// Pages built in later milestones show a plain "coming soon" page until then (see BUILD-PLAN.md).
-foreach ([
-    'quote' => 'Request a quote',
-] as $name => $label) {
-    Route::view("/{$name}", 'pages.soon', ['label' => $label])->name($name);
-}
+Route::view('/quote', 'pages.quote')->name('quote');
+Route::post('/quote', [QuoteController::class, 'store'])->middleware('throttle:5,10')->name('quote.store');
 
 // Dev-only reference page for the design tokens.
 if (! app()->environment('production')) {
