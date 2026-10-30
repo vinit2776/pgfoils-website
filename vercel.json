@@ -8,7 +8,8 @@
     "api/index.php": {
       "runtime": "vercel-php@0.9.0",
       "memory": 512,
-      "maxDuration": 30
+      "maxDuration": 30,
+      "excludeFiles": "{public/build/assets/**,public/img/!(manifest.json),public/js/**,public/css/**,public/fonts/**,public/docs/**,public/vendor/**,tests/**,node_modules/**,resources/images/**,vendor/aws/aws-sdk-php/src/data/!(s3)/**}"
     }
   },
   "routes": [
