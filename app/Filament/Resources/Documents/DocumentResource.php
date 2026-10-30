@@ -96,14 +96,7 @@ class DocumentResource extends Resource
             FileUpload::make('file_path')->label('File')
                 ->disk('investor')->directory(fn () => 'uploads/'.now()->format('Y'))->preserveFilenames()
                 ->acceptedFileTypes(array_keys(Document::MIMES))->maxSize(Document::MAX_KB)
-                ->helperText('PDF, or Excel or Word for older items. Up to 25 MB. The file type is checked from the file itself.')
-                ->rules([fn () => function ($attr, $value, $fail) {
-                    // Refuse an exact copy of a file already stored.
-                    $path = is_object($value) ? $value->getRealPath() : null;
-                    if ($path && Document::where('checksum', hash_file('sha256', $path))->exists()) {
-                        $fail('This exact file is already in the documents list. Open that document and use "Replace file" if it has changed.');
-                    }
-                }]),
+                ->helperText('PDF, or Excel or Word for older items. Up to 25 MB. The file type is checked from the file itself.'),
             Select::make('status')->options(fn () => static::canPublish()
                 ? Document::STATUSES
                 : [Document::DRAFT => Document::STATUSES[Document::DRAFT]])

@@ -69,10 +69,22 @@ class InvestorsController extends Controller
     {
         abort_unless($document->isLive(), 404);
 
-        if ($document->file_path && Storage::disk('investor')->exists($document->file_path)) {
+        $disk = Storage::disk('investor');
+        if ($document->file_path && $disk->exists($document->file_path)) {
             $name = $document->slug().'.'.($document->file_type ?: 'pdf');
 
-            return Storage::disk('investor')->response($document->file_path, $name, [
+            // On the live site the file sits in private R2 storage. Vercel cannot stream big files itself,
+            // so send the browser to a short-lived signed link. The address investors use does not change.
+            if (config('filesystems.disks.investor.driver') === 's3') {
+                $mime = array_search($document->file_type, Document::MIMES, true) ?: 'application/pdf';
+
+                return redirect()->away($disk->temporaryUrl($document->file_path, now()->addMinutes(10), [
+                    'ResponseContentDisposition' => 'inline; filename="'.$name.'"',
+                    'ResponseContentType' => $mime,
+                ]))->header('Cache-Control', 'no-store');
+            }
+
+            return $disk->response($document->file_path, $name, [
                 'Content-Disposition' => 'inline; filename="'.$name.'"',
                 'X-Content-Type-Options' => 'nosniff',
             ]);

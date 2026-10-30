@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -65,7 +66,12 @@ class Document extends Model
             if ($d->isDirty('file_path') && $d->file_path) {
                 $disk = Storage::disk('investor');
                 $d->file_size = $disk->size($d->file_path);
-                $d->checksum = hash('sha256', $disk->get($d->file_path));
+                $d->checksum = self::checksum($disk, $d->file_path);
+                // Refuse an exact copy of a file already stored (checked here so it also works when the file went straight to R2).
+                if (self::where('checksum', $d->checksum)->where('id', '!=', $d->id ?? 0)->exists()) {
+                    $disk->delete($d->file_path);
+                    throw ValidationException::withMessages(['file_path' => 'This exact file is already in the documents list. Open that document and use "Replace file" if it has changed.']);
+                }
                 $d->file_type = self::MIMES[$disk->mimeType($d->file_path)] ?? strtolower(pathinfo($d->file_path, PATHINFO_EXTENSION));
             }
             if ($user) {
@@ -105,6 +111,17 @@ class Document extends Model
     public function url(): string
     {
         return route('investors.document', [$this, $this->slug()]);
+    }
+
+    /** SHA-256 of a stored file, read as a stream so large files do not fill memory. */
+    public static function checksum($disk, string $path): string
+    {
+        $h = hash_init('sha256');
+        $stream = $disk->readStream($path);
+        hash_update_stream($h, $stream);
+        fclose($stream);
+
+        return hash_final($h);
     }
 
     /** Keeps the current file as an archived version and points the document at the new one. Same public URL. */

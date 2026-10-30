@@ -15,9 +15,17 @@ foreach (['PACKAGES' => 'packages', 'SERVICES' => 'services', 'CONFIG' => 'confi
 putenv("VIEW_COMPILED_PATH=$tmp/storage/framework/views");
 $_ENV['VIEW_COMPILED_PATH'] = "$tmp/storage/framework/views";
 
-// Read-only copy of the public content (pages and the Investors Corner list), built by scripts/vercel-prepare.sh.
-putenv('DB_DATABASE='.realpath(__DIR__.'/../database/deploy.sqlite'));
-$_ENV['DB_DATABASE'] = realpath(__DIR__.'/../database/deploy.sqlite');
+// Until a real database is configured (DB_HOST), fall back to the read-only snapshot built by scripts/vercel-prepare.sh.
+if (! getenv('DB_HOST')) {
+    putenv('DB_CONNECTION=sqlite');
+    putenv('DB_DATABASE='.realpath(__DIR__.'/../database/deploy.sqlite'));
+    putenv('SESSION_DRIVER=cookie');
+    putenv('CACHE_STORE=array');
+    $_ENV['SESSION_DRIVER'] = 'cookie';
+    $_ENV['CACHE_STORE'] = 'array';
+    $_ENV['DB_CONNECTION'] = 'sqlite';
+    $_ENV['DB_DATABASE'] = realpath(__DIR__.'/../database/deploy.sqlite');
+}
 
 // Static files that sit in public/ are served by Vercel; PHP only sees the rest.
 $_SERVER['SCRIPT_FILENAME'] = __DIR__.'/../public/index.php';

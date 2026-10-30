@@ -55,6 +55,6 @@ jobs:
           PY
           git checkout --orphan release
           git add -A
-          git add -f public/build public/img database/deploy.sqlite
+          git add -f public/build public/img public/css/filament public/js/filament public/fonts/filament database/deploy.sqlite
           git commit -q -m "Release ${GITHUB_SHA}"
           git push --force origin release

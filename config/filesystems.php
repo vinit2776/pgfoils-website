@@ -39,7 +39,19 @@ return [
         ],
 
         // Investor documents: private, served only through the download route (never directly).
-        'investor' => [
+        // On the live site they sit in a private Cloudflare R2 bucket (set R2_BUCKET and the keys); locally they stay on disk.
+        'investor' => env('R2_BUCKET') ? [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => env('R2_REGION', 'auto'),
+            'bucket' => env('R2_BUCKET'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ] : [
             'driver' => 'local',
             'root' => storage_path('app/private/investor-docs'),
             'throw' => false,

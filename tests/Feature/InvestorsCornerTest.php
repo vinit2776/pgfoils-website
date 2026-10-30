@@ -111,6 +111,34 @@ class InvestorsCornerTest extends TestCase
         $this->assertDatabaseHas('activity_log', ['description' => 'File replaced']);
     }
 
+    public function test_an_exact_copy_of_a_stored_file_is_refused(): void
+    {
+        Storage::fake('investor');
+        Storage::disk('investor')->put('uploads/2026/a.pdf', 'same bytes');
+        Storage::disk('investor')->put('uploads/2026/b.pdf', 'same bytes');
+        $this->doc(['external_url' => null, 'file_path' => 'uploads/2026/a.pdf']);
+
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->doc(['title' => 'Copy', 'external_url' => null, 'file_path' => 'uploads/2026/b.pdf']);
+    }
+
+    public function test_a_duplicate_is_removed_from_storage_and_not_saved(): void
+    {
+        Storage::fake('investor');
+        Storage::disk('investor')->put('uploads/2026/a.pdf', 'same bytes');
+        Storage::disk('investor')->put('uploads/2026/b.pdf', 'same bytes');
+        $this->doc(['external_url' => null, 'file_path' => 'uploads/2026/a.pdf']);
+
+        try {
+            $this->doc(['title' => 'Copy', 'external_url' => null, 'file_path' => 'uploads/2026/b.pdf']);
+        } catch (\Illuminate\Validation\ValidationException) {
+        }
+
+        $this->assertDatabaseMissing('documents', ['title' => 'Copy']);
+        Storage::disk('investor')->assertMissing('uploads/2026/b.pdf');
+        Storage::disk('investor')->assertExists('uploads/2026/a.pdf');
+    }
+
     public function test_a_reviewer_cannot_publish_but_an_editor_can(): void
     {
         $d = $this->doc(['status' => Document::DRAFT]);

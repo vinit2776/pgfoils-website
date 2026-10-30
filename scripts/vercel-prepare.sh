@@ -5,6 +5,8 @@ cd "$(dirname "$0")/.."
 
 php artisan images:build
 npm run build
+php artisan filament:assets
+php artisan livewire:publish --assets >/dev/null 2>&1 || true
 
 rm -f database/deploy.sqlite
 touch database/deploy.sqlite
