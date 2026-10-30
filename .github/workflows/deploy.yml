@@ -49,4 +49,5 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then FLAGS="--prod"; else FLAGS=""; fi
-          npx --yes vercel@54 deploy $FLAGS --yes --token "$VERCEL_TOKEN"
+          TOKEN=$(printf '%s' "$VERCEL_TOKEN" | tr -d '\r\n[:space:]')
+          npx --yes vercel@54 deploy $FLAGS --yes --token "$TOKEN"
