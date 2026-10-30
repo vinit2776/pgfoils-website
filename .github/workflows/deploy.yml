@@ -1,24 +1,22 @@
 name: Deploy
 
-# Runs after CI passes on main. Pull requests get a preview URL; main goes to production.
+# Vercel's own build machine has no PHP, so GitHub builds everything (images, CSS/JS, the read-only
+# content database) and publishes it as the `release` branch. Vercel's Git connection deploys that branch.
+# No Vercel token is needed.
 on:
   push:
     branches: [main]
-  pull_request:
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: release
   cancel-in-progress: true
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+permissions:
+  contents: write
 
 jobs:
-  deploy:
+  release:
     runs-on: ubuntu-latest
-    # Forked pull requests cannot read secrets, so they skip the deploy.
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
 
@@ -38,16 +36,25 @@ jobs:
           composer install --no-interaction --prefer-dist --no-progress
           npm ci
 
-      - name: Prepare app (images, assets, read-only content database)
+      - name: Build (images, assets, read-only content database)
         run: |
           cp .env.example .env
           php artisan key:generate
           ./scripts/vercel-prepare.sh
 
-      - name: Deploy to Vercel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Publish the release branch
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then FLAGS="--prod"; else FLAGS=""; fi
-          TOKEN=$(printf '%s' "$VERCEL_TOKEN" | tr -d '\r\n[:space:]')
-          npx --yes vercel@54 deploy $FLAGS --yes --scope vinits-projects-6917ea62 --token "$TOKEN"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Vercel builds `release` itself, so turn its Git deploys back on there.
+          python3 - <<'PY'
+          import json
+          d = json.load(open('vercel.json'))
+          d.pop('git', None)
+          json.dump(d, open('vercel.json', 'w'), indent=2)
+          PY
+          git checkout --orphan release
+          git add -A
+          git add -f public/build public/img database/deploy.sqlite
+          git commit -q -m "Release ${GITHUB_SHA}"
+          git push --force origin release
