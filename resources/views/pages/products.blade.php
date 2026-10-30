@@ -7,7 +7,7 @@
             <p><a class="btn" href="/docs/product-specifications.pdf" target="_blank" rel="noopener">Download specifications (PDF)</a></p>
             <div class="tiles" style="margin-top:28px">
                 @foreach ($c['products'] as [$name, $img])
-                    <figure class="tile" style="margin:0">
+                    <figure class="tile">
                         <x-picture :name="$img" :alt="$name" sizes="(min-width: 700px) 33vw, 50vw"/>
                         <figcaption>{{ $name }}</figcaption>
                     </figure>

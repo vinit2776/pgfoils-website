@@ -6,7 +6,7 @@
         <div class="wrap">
             <div class="tiles t4">
                 @foreach ($c['certificates'] as [$n, $label])
-                    <figure class="tile" style="margin:0">
+                    <figure class="tile">
                         <x-picture :name="'cert-'.$n" :alt="$label" sizes="(min-width: 1000px) 25vw, 50vw"/>
                         <figcaption>{{ $label }}</figcaption>
                     </figure>

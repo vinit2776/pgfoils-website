@@ -34,7 +34,7 @@
             </div>
             <div class="tiles t3">
                 @foreach (array_slice($c['products'], 0, 6) as [$name, $img])
-                    <figure class="tile" style="margin:0">
+                    <figure class="tile">
                         <x-picture :name="$img" :alt="$name" sizes="(min-width: 900px) 30vw, 50vw"/>
                         <figcaption>{{ $name }}</figcaption>
                     </figure>
@@ -88,7 +88,7 @@
             <div class="tiles t6">
                 @foreach ([['food', [1, 2, 3, 4, 5, 6]], ['pharma', [1, 2, 3, 4, 5, 6]]] as [$key, $ids])
                     @foreach ($ids as $i)
-                        <figure class="tile logo" style="margin:0"><x-picture :name="'cl-'.$key.'-'.$i" :alt="ucfirst($key).' client'" sizes="(min-width: 1000px) 16vw, 33vw"/></figure>
+                        <figure class="tile logo"><x-picture :name="'cl-'.$key.'-'.$i" :alt="ucfirst($key).' client'" sizes="(min-width: 1000px) 16vw, 33vw"/></figure>
                     @endforeach
                 @endforeach
             </div>

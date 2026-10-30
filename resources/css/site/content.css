@@ -35,7 +35,7 @@
 .tiles { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
 @media (min-width: 700px) { .tiles { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 1000px) { .tiles.t4 { grid-template-columns: repeat(4, 1fr); } .tiles.t6 { grid-template-columns: repeat(6, 1fr); } }
-.tile { background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; }
+.tile { margin: 0; background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; }
 .tile img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; padding: 12px; }
 .tile.photo img { object-fit: cover; padding: 0; }
 .tile figcaption, .tile h3 { padding: 12px 14px 14px; font: 600 .9375rem var(--f-display); color: var(--ink); margin: 0; border-top: 1px solid var(--line); }

@@ -143,6 +143,23 @@ class DocumentResource extends Resource
                         $record->replaceFile($data['file']);
                         Notification::make()->title('File replaced')->success()->send();
                     }),
+                Action::make('publish')->label(fn (Document $r) => $r->status === Document::UNPUBLISHED ? 'Publish again' : 'Publish')
+                    ->icon(Heroicon::OutlinedRocketLaunch)->color('success')->requiresConfirmation()
+                    ->modalHeading('Publish this document?')
+                    ->modalDescription('It becomes visible on the website straight away.')
+                    ->visible(fn (Document $r) => static::canPublish() && in_array($r->status, [Document::DRAFT, Document::UNPUBLISHED], true))
+                    ->action(function (Document $record) {
+                        $record->update(['status' => Document::PUBLISHED, 'publish_at' => null]);
+                        Notification::make()->title('Published')->success()->send();
+                    }),
+                Action::make('schedule')->label('Schedule')->icon(Heroicon::OutlinedClock)->color('gray')
+                    ->modalDescription('The document goes live by itself at this time (India time).')
+                    ->visible(fn (Document $r) => static::canPublish() && $r->status === Document::DRAFT)
+                    ->schema([DateTimePicker::make('publish_at')->label('Go live at')->seconds(false)->required()->after('now')])
+                    ->action(function (Document $record, array $data) {
+                        $record->update(['status' => Document::SCHEDULED, 'publish_at' => $data['publish_at']]);
+                        Notification::make()->title('Scheduled')->success()->send();
+                    }),
                 Action::make('unpublish')->label('Unpublish')->icon(Heroicon::OutlinedEyeSlash)->color('gray')->requiresConfirmation()
                     ->modalDescription('The document is hidden from the website. Nothing is deleted and you can publish it again.')
                     ->visible(fn (Document $r) => static::canPublish() && $r->isLive())

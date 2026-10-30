@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\Documents\Pages;
 
+use App\Filament\Pages\AddDocument;
 use App\Filament\Resources\Documents\DocumentResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageDocuments extends ManageRecords
@@ -12,6 +13,7 @@ class ManageDocuments extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        return [CreateAction::make()->label('Add document')];
+        // Adding goes through the three-step wizard: Upload, Details, Publish.
+        return [Action::make('add')->label('Add document')->icon('heroicon-o-plus')->url(AddDocument::getUrl())];
     }
 }
