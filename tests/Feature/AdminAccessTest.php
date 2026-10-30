@@ -49,6 +49,14 @@ class AdminAccessTest extends TestCase
         $this->actingAs($this->staff(User::ADMIN, active: false))->get('/admin')->assertForbidden();
     }
 
+    public function test_editors_and_reviewers_can_sign_in_without_two_step_but_admins_cannot(): void
+    {
+        foreach ([User::EDITOR, User::REVIEWER] as $role) {
+            $this->actingAs($this->staff($role, mfa: false))->get('/admin')->assertOk();
+        }
+        $this->actingAs($this->staff(User::ADMIN, mfa: false))->get('/admin')->assertRedirect();
+    }
+
     public function test_two_step_sign_in_is_required_before_the_dashboard(): void
     {
         $response = $this->actingAs($this->staff(User::ADMIN, mfa: false))->get('/admin');

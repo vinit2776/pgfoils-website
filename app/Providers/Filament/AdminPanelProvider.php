@@ -33,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->multiFactorAuthentication([
                 AppAuthentication::make()->recoverable()->brandName('PG Foils Admin'),
             ], isRequired: true)
+            ->multiFactorAuthenticationRequiredMiddlewareName(\App\Http\Middleware\RequireTwoStepForAdmins::class) // only Admins are forced
             ->brandName('PG Foils Admin')
             ->colors([
                 // Logo cyan, see DESIGN.md. Hex is the closest sRGB of oklch(0.68 0.14 235).
