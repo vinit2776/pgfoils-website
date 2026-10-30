@@ -50,4 +50,4 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then FLAGS="--prod"; else FLAGS=""; fi
           TOKEN=$(printf '%s' "$VERCEL_TOKEN" | tr -d '\r\n[:space:]')
-          npx --yes vercel@54 deploy $FLAGS --yes --token "$TOKEN"
+          npx --yes vercel@54 deploy $FLAGS --yes --scope vinits-projects-6917ea62 --token "$TOKEN"
