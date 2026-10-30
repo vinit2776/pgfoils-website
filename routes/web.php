@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\InvestorsController;
 use App\Http\Controllers\LegacyRedirectController;
-use App\Http\Controllers\QuoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.home')->name('home');
@@ -24,7 +23,6 @@ Route::get('/storage/{path}', [LegacyRedirectController::class, 'file'])->where(
 Route::get('/{page}.html', [LegacyRedirectController::class, 'page'])->where('page', '[A-Za-z0-9_-]+');
 
 Route::view('/quote', 'pages.quote')->name('quote');
-Route::post('/quote', [QuoteController::class, 'store'])->middleware('throttle:5,10')->name('quote.store');
 
 // Dev-only reference page for the design tokens.
 if (! app()->environment('production')) {
