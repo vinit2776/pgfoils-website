@@ -5,9 +5,9 @@
         <section class="block {{ $key === 'pharma' ? 'alt' : '' }}">
             <div class="wrap">
                 <h2 class="h3 sec-head">{{ $label }}</h2>
-                <div class="tiles t6">
+                <div class="tiles t4">
                     @for ($i = 1; $i <= $count; $i++)
-                        <figure class="tile logo"><x-picture :name="'cl-'.$key.'-'.$i" :alt="$label.' client '.$i" sizes="(min-width: 1000px) 16vw, 33vw"/></figure>
+                        <figure class="tile logo"><x-picture :name="'cl-'.$key.'-'.$i" :alt="$label.' client '.$i" sizes="(min-width: 1000px) 25vw, 50vw"/></figure>
                     @endfor
                 </div>
             </div>

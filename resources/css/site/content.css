@@ -39,7 +39,7 @@
 .tile img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; padding: 12px; }
 .tile.photo img { object-fit: cover; padding: 0; }
 .tile figcaption, .tile h3 { padding: 12px 14px 14px; font: 600 .9375rem var(--f-display); color: var(--ink); margin: 0; border-top: 1px solid var(--line); }
-.tile.logo img { aspect-ratio: 8 / 3; }
+.tile.logo img { aspect-ratio: 3 / 2; padding: 20px; }
 .tile.plain { border: 0; background: transparent; }
 .tile.plain img { padding: 0; }
 

@@ -18,8 +18,8 @@
         <div class="wrap">
             <p class="lbl">Approvals and audits</p>
             <ul class="cert-row">
-                @foreach (array_slice($c['certificates'], 0, 6) as [$n, $label])
-                    <li><x-picture :name="'cert-'.$n" :alt="$label" sizes="120px"/></li>
+                @foreach ($c['certificates'] as [$n, $label])
+                    <li><x-picture :name="'cert-'.$n" :alt="$label" sizes="(min-width: 900px) 120px, 25vw"/></li>
                 @endforeach
             </ul>
             <a class="link-arrow" href="{{ route('certificates') }}">All certificates</a>
@@ -85,14 +85,19 @@
                 <h2 class="h2">Packed for the brands on your shelf.</h2>
                 <p class="sub">Food and pharmaceutical companies across India rely on PG Foils.</p>
             </div>
-            <div class="tiles t6">
-                @foreach ([['food', [1, 2, 3, 4, 5, 6]], ['pharma', [1, 2, 3, 4, 5, 6]]] as [$key, $ids])
-                    @foreach ($ids as $i)
-                        <figure class="tile logo"><x-picture :name="'cl-'.$key.'-'.$i" :alt="ucfirst($key).' client'" sizes="(min-width: 1000px) 16vw, 33vw"/></figure>
-                    @endforeach
-                @endforeach
-            </div>
-            <p class="row-links"><a class="link-arrow" href="{{ route('clients') }}">See all 52 clients</a></p>
+            @foreach ([['food', 28, 'Food industries', ''], ['pharma', 24, 'Pharma industries', 'rev']] as [$key, $count, $label, $dir])
+                <h3 class="marquee-label">{{ $label }}</h3>
+                <div class="marquee {{ $dir }}" role="group" aria-label="{{ $label }} clients">
+                    <div class="track">
+                        @foreach ([false, true] as $copy)
+                            @for ($i = 1; $i <= $count; $i++)
+                                <div class="logo-card" @if ($copy) aria-hidden="true" @endif><x-picture :name="'cl-'.$key.'-'.$i" :alt="$copy ? '' : $label.' client '.$i" sizes="220px"/></div>
+                            @endfor
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+            <p class="row-links"><a class="link-arrow" href="{{ route('clients') }}">See all 52 clients in a grid</a></p>
         </div>
     </section>
 
