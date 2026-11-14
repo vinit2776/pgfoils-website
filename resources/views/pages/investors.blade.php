@@ -54,7 +54,7 @@
                                                     <th scope="row">{{ $d->yearLabel() }}</th>
                                                     <td>{{ $d->title }}</td>
                                                     <td class="sz">{{ strtoupper($d->file_type ?: 'file') }}@if ($d->sizeLabel()) · {{ $d->sizeLabel() }}@endif</td>
-                                                    <td class="go"><a href="{{ $d->url() }}" target="_blank" rel="noopener" aria-label="Download {{ $d->title }}">Download <span aria-hidden="true">↓</span></a></td>
+                                                    <td class="go">@if ($d->isMissingFile())<span class="miss-note">Being restored</span>@else<a href="{{ $d->url() }}" target="_blank" rel="noopener" aria-label="Download {{ $d->title }}">Download <span aria-hidden="true">↓</span></a>@endif</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -106,6 +106,10 @@
 .ir-sec h2 a:hover { color: var(--cyan-ink); }
 .docs .when { margin-left: auto; font-size: .8125rem; color: var(--muted); white-space: nowrap; }
 .docs .t { min-width: 0; }
+.docs .row { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 6px 0; border-top: 1px solid var(--line); color: var(--ink-2); }
+.docs .miss .t { color: var(--muted); }
+.docs .miss .when, .miss-note { margin-left: auto; font-size: .8125rem; font-weight: 600; color: var(--warn); background: var(--warn-tint); padding: 3px 8px; white-space: normal; text-align: right; }
+.miss-note { white-space: nowrap; }
 @media (min-width: 820px) {
   .docs.cols { display: block; columns: 2; column-gap: 40px; }
   .docs.cols li { break-inside: avoid; }

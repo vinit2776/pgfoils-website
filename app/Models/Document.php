@@ -108,6 +108,12 @@ class Document extends Model
         return Str::slug($this->title) ?: 'document';
     }
 
+    /** A document migrated from the old site whose file has not been uploaded here yet. Clears itself once a file is attached. */
+    public function isMissingFile(): bool
+    {
+        return ! $this->file_path && $this->legacy_path;
+    }
+
     /** "9.9 MB" or "310 KB"; null when the size is not recorded. */
     public function sizeLabel(): ?string
     {
