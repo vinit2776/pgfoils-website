@@ -108,6 +108,28 @@ class Document extends Model
         return Str::slug($this->title) ?: 'document';
     }
 
+    /** "9.9 MB" or "310 KB"; null when the size is not recorded. */
+    public function sizeLabel(): ?string
+    {
+        if (! $this->file_size) {
+            return null;
+        }
+
+        return $this->file_size >= 1048576
+            ? number_format($this->file_size / 1048576, 1).' MB'
+            : max(1, (int) round($this->file_size / 1024)).' KB';
+    }
+
+    /** Financial year for display: the stored one, else read from titles like "AR -2025-26". */
+    public function yearLabel(): ?string
+    {
+        if ($this->fiscal_year) {
+            return $this->fiscal_year;
+        }
+
+        return preg_match('/(20\d{2})\s*[-–]\s*(\d{2})\b/', $this->title, $m) ? $m[1].'-'.$m[2] : null;
+    }
+
     public function url(): string
     {
         return route('investors.document', [$this, $this->slug()]);

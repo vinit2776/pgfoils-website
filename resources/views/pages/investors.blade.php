@@ -23,17 +23,16 @@
                 <form class="ir-search" method="get" role="search" action="{{ url()->current() }}">
                     <label class="visually-hidden" for="q">Search documents by title</label>
                     <input id="q" type="search" name="q" value="{{ $q }}" placeholder="Search by title">
-                    @if ($fy)<input type="hidden" name="fy" value="{{ $fy }}">@endif
+                    @if ($years->isNotEmpty())
+                        <label class="visually-hidden" for="fy">Financial year</label>
+                        <select id="fy" name="fy">
+                            <option value="">All years</option>
+                            @foreach ($years as $y)<option value="{{ $y }}" @selected($fy === $y)>{{ $y }}</option>@endforeach
+                        </select>
+                    @endif
                     <button class="btn solid" type="submit">Search</button>
+                    @if ($filtered)<a class="clear" href="{{ url()->current() }}">Clear</a>@endif
                 </form>
-                @if ($years->isNotEmpty())
-                    <p class="chips" aria-label="Filter by financial year">
-                        <a href="{{ url()->current() }}{{ $q !== '' ? '?q='.urlencode($q) : '' }}" @if (! $fy) aria-current="true" @endif>All years</a>
-                        @foreach ($years as $y)
-                            <a href="{{ url()->current() }}?fy={{ $y }}{{ $q !== '' ? '&q='.urlencode($q) : '' }}" @if ($fy === $y) aria-current="true" @endif>{{ $y }}</a>
-                        @endforeach
-                    </p>
-                @endif
 
                 @if ($filtered)<p class="note">{{ $total }} {{ Str::plural('document', $total) }} found.</p>@endif
                 @forelse ($sections as $s)
@@ -43,10 +42,26 @@
                             @if ($g['title'])
                                 <details @if ($loop->first || $filtered) open @endif>
                                     <summary>{{ $g['title'] }} <span class="n">{{ $g['docs']->count() }} {{ Str::plural('file', $g['docs']->count()) }}</span></summary>
-                                    <ul class="docs">@foreach ($g['docs'] as $d) @include('pages.partials.document', ['d' => $d]) @endforeach</ul>
+                                    <ul class="docs @if ($g['docs']->count() >= 3 && $g['docs']->count() <= 16) cols @endif">@foreach ($g['docs'] as $d) @include('pages.partials.document', ['d' => $d]) @endforeach</ul>
                                 </details>
                             @else
-                                <ul class="docs flat">@foreach ($g['docs'] as $d) @include('pages.partials.document', ['d' => $d]) @endforeach</ul>
+                                @if ($g['docs']->count() > 2 && $g['docs']->every(fn ($d) => $d->yearLabel()))
+                                    <table class="ledger">
+                                        <thead><tr><th scope="col">Year</th><th scope="col">Document</th><th scope="col" class="sz">Size</th><th scope="col"><span class="visually-hidden">Download</span></th></tr></thead>
+                                        <tbody>
+                                            @foreach ($g['docs'] as $d)
+                                                <tr>
+                                                    <th scope="row">{{ $d->yearLabel() }}</th>
+                                                    <td>{{ $d->title }}</td>
+                                                    <td class="sz">{{ strtoupper($d->file_type ?: 'file') }}@if ($d->sizeLabel()) · {{ $d->sizeLabel() }}@endif</td>
+                                                    <td class="go"><a href="{{ $d->url() }}" target="_blank" rel="noopener" aria-label="Download {{ $d->title }}">Download <span aria-hidden="true">↓</span></a></td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <ul class="docs flat @if ($g['docs']->count() >= 3 && $g['docs']->count() <= 16) cols @endif">@foreach ($g['docs'] as $d) @include('pages.partials.document', ['d' => $d]) @endforeach</ul>
+                                @endif
                             @endif
                         @endforeach
                     </section>
