@@ -1,0 +1,58 @@
+/* PG Foils design tokens. Source of truth: DESIGN.md. OKLCH values. */
+
+/* One family, one file (47 KB): Archivo, weights 400-800, widths 100-112, Latin subset.
+   Width carries hierarchy: wide for headlines, normal for text. Subset built with fonttools,
+   see scripts/build-font.sh. No rupee glyph (U+20B9): use "Rs." or add it when prices appear. */
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo.woff2') format('woff2');
+  font-weight: 400 800;
+  font-stretch: 100% 112%;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* neutrals: cool, never cream */
+  --ink:       oklch(0.20 0.02 255);
+  --ink-2:     oklch(0.36 0.02 255);
+  --muted:     oklch(0.47 0.02 255);
+  --bg:        oklch(0.965 0.006 250);
+  --surface:   oklch(0.992 0.003 250);
+  --line:      oklch(0.87 0.008 250);
+  --steel:     oklch(0.27 0.025 255);
+  --steel-2:   oklch(0.34 0.03 255);
+  --on-dark:   oklch(0.95 0.005 250);
+  --on-dark-2: oklch(0.80 0.012 250);
+
+  /* accent */
+  --cyan:      oklch(0.68 0.14 235);
+  --cyan-ink:  oklch(0.47 0.13 240);
+
+  /* registration bar only, plus the logo itself */
+  --mag:       oklch(0.62 0.24 355);
+  --yel:       oklch(0.88 0.17 95);
+
+  /* semantic */
+  --ok:        oklch(0.50 0.14 155);
+  --ok-tint:   oklch(0.93 0.07 155);
+  --warn:      oklch(0.38 0.08 80);
+  --warn-tint: oklch(0.94 0.08 95);
+  --err:       oklch(0.50 0.19 27);
+
+  /* type: one family. Fallbacks match Archivo's proportions closely to limit layout shift. */
+  --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --f-body:    var(--f-display);
+  --f-mono:    var(--f-display); /* legacy alias: data labels now use Archivo with tabular figures */
+
+  /* layout and motion */
+  --gutter: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+
+  /* semantic z-index scale */
+  --z-sticky: 20;
+  --z-drawer: 40;
+  --z-modal: 50;
+  --z-progress: 60;
+}
